@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toothsmiths — Análisis de Marca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Layout idea: a dark navy cover, then a cream long-form report with navy section headers
+     and a red accent for labels, quotes and callouts. One column, max 760px reading width. */
+  :root{
+    --navy: #0f2142;
+    --navy-deep: #0a1830;
+    --red: #c8102e;
+    --red-deep: #960d23;
+    --cream: #faf5ee;
+    --card: #ffffff;
+    --ink: #1c2230;
+    --muted: #5b6475;
+    --line: #e6ddd0;
+    --font-display: 'Archivo', sans-serif;
+    --font-body: 'Work Sans', sans-serif;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:17px;
+    line-height:1.6;
+  }
+  img{max-width:100%;display:block;border-radius:10px;}
+  .wrap{max-width:780px;margin:0 auto;padding:0 20px;}
+  h1,h2,h3{font-family:var(--font-display);line-height:1.15;text-wrap:balance;color:var(--navy);}
+  p{margin:0 0 14px;}
+  em{color:var(--muted);}
+  blockquote{
+    margin:18px 0;padding:14px 18px;border-left:4px solid var(--red);
+    background:#fff6f3;font-style:italic;color:var(--navy);border-radius:4px;
+  }
+
+  /* ---- Cover ---- */
+  .cover{
+    background:
+      linear-gradient(var(--navy-deep), var(--navy-deep)) ,
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 64px),
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.05) 0 1px, transparent 1px 64px);
+    color:#fff;padding:90px 20px 70px;text-align:center;
+  }
+  .cover .eyebrow{
+    font-family:var(--font-display);font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--red);font-size:13px;margin-bottom:18px;
+  }
+  .cover h1{color:#fff;font-size:clamp(34px,6vw,54px);font-weight:900;margin:0 0 14px;}
+  .cover .sub{color:#c9d2e3;max-width:520px;margin:0 auto;font-size:17px;}
+  .cover .datebar{
+    display:inline-block;margin-top:28px;padding:8px 18px;border:1px solid rgba(255,255,255,.25);
+    border-radius:30px;font-size:13px;color:#dfe5f0;font-family:var(--font-display);letter-spacing:.04em;
+  }
+
+  /* ---- Sections ---- */
+  section{padding:56px 0;}
+  section + section{border-top:1px solid var(--line);}
+  .section-label{
+    display:inline-block;font-family:var(--font-display);font-weight:800;font-size:13px;
+    letter-spacing:.08em;color:var(--red);text-transform:uppercase;margin-bottom:10px;
+  }
+  h2{font-size:clamp(24px,4vw,32px);font-weight:800;margin:0 0 18px;}
+  h3{font-size:19px;font-weight:700;margin:28px 0 10px;color:var(--navy);}
+  h3.sub-dark{
+    background:var(--navy);color:#fff;display:inline-block;padding:6px 14px;border-radius:6px;font-size:15px;
+  }
+
+  .named{font-weight:700;color:var(--navy);}
+
+  /* ---- Cards / lists ---- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:16px 0;}
+  ul.plain, ol.plain{padding-left:22px;margin:10px 0;}
+  ul.plain li, ol.plain li{margin-bottom:12px;}
+
+  table{width:100%;border-collapse:collapse;margin:18px 0;background:var(--card);border-radius:12px;overflow:hidden;border:1px solid var(--line);}
+  th,td{padding:14px 16px;text-align:left;vertical-align:top;font-size:15.5px;}
+  th{background:var(--navy);color:#fff;font-family:var(--font-display);font-weight:700;font-size:13px;letter-spacing:.03em;text-transform:uppercase;}
+  tr:not(:last-child) td{border-bottom:1px solid var(--line);}
+  td:first-child{font-weight:600;color:var(--navy);width:38%;}
+
+  /* ---- Persona cards ---- */
+  .persona{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:18px 0;border-top:5px solid var(--navy);}
+  .persona.buyer{border-top-color:var(--red);}
+  .persona .name{font-family:var(--font-display);font-weight:800;font-size:19px;color:var(--navy);margin-bottom:6px;}
+  .persona .bio{color:var(--ink);margin-bottom:14px;}
+  .persona dl{display:grid;grid-template-columns:120px 1fr;gap:8px 14px;margin:0;}
+  .persona dt{font-family:var(--font-display);font-weight:700;font-size:13px;color:var(--red);text-transform:uppercase;letter-spacing:.03em;}
+  .persona dd{margin:0 0 6px;}
+
+  /* ---- Competitor cards ---- */
+  .tag{display:inline-block;font-family:var(--font-display);font-weight:800;font-size:11px;letter-spacing:.06em;
+    text-transform:uppercase;padding:4px 10px;border-radius:30px;margin-bottom:10px;}
+  .tag.local{background:#e9f0ff;color:#1d4ed8;}
+  .tag.indirect{background:#fdeee0;color:#b45309;}
+  .tag.national{background:#fde8ec;color:var(--red-deep);}
+  .tag.ig-near{background:#e7f6ec;color:#15803d;}
+  .tag.ig-far{background:#f1eefb;color:#5b21b6;}
+
+  .competitor{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin:18px 0;}
+  .competitor h4{font-family:var(--font-display);font-size:17px;font-weight:800;color:var(--navy);margin:0 0 10px;}
+  .competitor img{margin-bottom:14px;border:1px solid var(--line);}
+  .arrow-list{list-style:none;padding:0;margin:0;}
+  .arrow-list li{position:relative;padding-left:22px;margin-bottom:10px;}
+  .arrow-list li::before{content:"→";position:absolute;left:0;color:var(--red);font-weight:700;}
+
+  .take{background:#fff6f3;border-left:4px solid var(--red);border-radius:6px;padding:10px 14px;margin-top:10px;}
+  .take b{color:var(--red-deep);}
+
+  .opp{background:var(--navy);color:#fff;border-radius:14px;padding:20px 22px;margin:16px 0;}
+  .opp b{color:#ffd9b3;}
+
+  .challenge{display:flex;gap:14px;margin:16px 0;}
+  .challenge .num{
+    font-family:var(--font-display);font-weight:900;color:var(--red);font-size:26px;line-height:1;flex:0 0 auto;
+  }
+
+  footer{padding:40px 20px 70px;text-align:center;color:var(--muted);font-size:13px;}
+
+  /* ---- Problem callout ---- */
+  .problem-callout{
+    background:#fff;border:1px solid var(--line);border-radius:16px;padding:32px 28px;margin:30px 0;text-align:center;
+    box-shadow:0 2px 14px rgba(15,33,66,.06);
+  }
+  .problem-callout .arrow-big{font-size:30px;color:var(--red);display:block;font-weight:800;margin-bottom:6px;}
+  .problem-callout h3{color:var(--navy);font-size:22px;margin:0 0 16px;}
+  .problem-callout blockquote{
+    text-align:left;margin:0 auto 16px;max-width:520px;
+  }
+  .problem-callout p{color:var(--ink);max-width:560px;margin:0 auto 14px;text-align:left;}
+  .problem-callout p:last-child{margin-bottom:0;}
+
+  /* ---- Value tags ---- */
+  .value-tag{
+    display:block;font-family:var(--font-display);font-weight:800;font-size:14px;letter-spacing:.06em;
+    color:var(--red);margin-bottom:4px;
+  }
+
+  /* ---- Golden circle ---- */
+  .golden-circle{margin:26px 0;}
+  .gc-svg{width:100%;max-width:680px;display:block;margin:0 auto;overflow:visible;}
+  .gc-fo{
+    background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:10px 14px;font-size:13.5px;line-height:1.4;font-family:var(--font-body);color:var(--ink);
+    height:100%;box-sizing:border-box;display:flex;align-items:center;
+  }
+  .gc-fo b{color:var(--navy);}
+
+  /* ---- Big statement ---- */
+  .big-statement{
+    font-family:var(--font-display);font-weight:800;font-size:clamp(24px,4.2vw,34px);line-height:1.25;
+    color:var(--navy);text-align:center;max-width:620px;margin:34px auto 10px;
+  }
+  .big-statement br + br{display:none;}
+
+  /* ---- SWOT grid ---- */
+  .swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+  .swot-box{border-radius:14px;padding:18px 20px;}
+  .swot-box h4{font-family:var(--font-display);font-size:14px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;margin:0 0 10px;}
+  .swot-box ul.plain{margin:0;padding-left:18px;}
+  .swot-box ul.plain li{margin-bottom:8px;font-size:14.5px;}
+  .swot-f{background:#e9f5ec;}
+  .swot-f h4{color:#1e7a3c;}
+  .swot-d{background:#fdecee;}
+  .swot-d h4{color:var(--red-deep);}
+  .swot-o{background:#e9f0ff;}
+  .swot-o h4{color:#1d4ed8;}
+  .swot-a{background:#fdf1e3;}
+  .swot-a h4{color:#b45309;}
+  @media (max-width:560px){.swot-grid{grid-template-columns:1fr;}}
+
+  /* ---- Pending flag ---- */
+  .pending-flag{
+    display:block;margin-top:10px;background:#fdecee;border:1.5px solid var(--red);border-radius:8px;
+    padding:10px 14px;font-weight:800;font-size:16px;color:var(--red-deep);font-family:var(--font-display);
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="eyebrow">Proyecto de marca · Dental Lab, EE. UU.</div>
+  <h1>Toothsmiths</h1>
+  <p class="sub">Análisis de marca: quiénes son, qué los diferencia, a quién le hablan y cómo se comparan frente a su competencia.</p>
+  <div class="datebar">Noviembre 2026</div>
+</div>
+
+<div class="wrap">
+
+<section id="s1">
+  <span class="section-label">01 · Fundamentos</span>
+  <h2>Sobre la marca</h2>
+  <p>Toothsmiths nació en 1988 en Lititz, Pensilvania, cuando James R. Ament abrió su propio laboratorio dental. Diez años después se certificó como Tecnólogo Dental Maestro en la NYU College of Dentistry, y desde entonces no ha dejado de formarse: Pankey Institute, Dawson Academy, y un programa propio de entrenamiento donde combina webinars con práctica directa en el laboratorio. Hoy, casi 40 años después, siguen en el mismo lugar, haciendo lo mismo que los hizo buenos desde el primer día: coronas, prótesis y reconstrucciones hechas a mano, ahora apoyadas por la tecnología más reciente del sector.</p>
+
+  <blockquote>El nombre se escribe <b>Toothsmiths</b>, todo junto, sin espacio. Junto con el eslogan <b>"Olde tyme craftsmanship with today's technology"</b> y el ícono de la marca, está registrado como trademark. Cualquier cosa que se haga de aquí en adelante tiene que respetar esos tres elementos tal como están.</blockquote>
+  <p><em>Nota de uso:</em> en distintos materiales aparecen variantes como "Tooth Smiths" (separado) o "Toothsmiths Inc." El nombre oficial a usar en cualquier pieza de marca es <b>Toothsmiths</b>, sin espacio y sin el sufijo legal, salvo en los contextos donde ese sufijo sea obligatorio (documentos legales, contratos).</p>
+
+  <h3>A quién le hablan</h3>
+  <p>A diferencia de lo que uno podría pensar, Toothsmiths no le habla al paciente. Le habla al doctor. El paciente aparece de vez en cuando (por ejemplo, cuando hace falta ajustar un tono de color en persona —una sesión de este tipo, shade matching, puede tomar entre dos y tres horas—), pero siempre porque el doctor lo autorizó con una prescripción firmada. Como lo contó el propio equipo: <em>"nosotros usualmente no trabajamos con el paciente... nuestro trabajo en sí es con los doctores, con las oficinas dentales"</em>, y <em>"todo lo que hacemos en el laboratorio está autorizado por el doctor con un script firmado. No podemos hacer nada sin la aprobación del doctor."</em></p>
+
+  <h3>Quiénes son</h3>
+  <p>James R. Ament (fundador), Pamela Ament, Barbara Longenecker y Richard Gaston son la cara del equipo en su página web. El Dr. Nicholas Gardner es un aliado cercano (dirige el Dawson Study Club que el laboratorio aloja todos los meses), pero no es parte del staff.</p>
+  <p>Es, además, un espacio genuinamente familiar: se permiten mascotas dentro del laboratorio, y tanto pacientes como doctores pueden acercarse sin mayor protocolo. El fundador prefiere mantenerse fuera del centro de atención en términos de imagen personal, pero sí quiere que esa misma calidez se proyecte hacia afuera en la marca.</p>
+
+  <h3>Alcance geográfico</h3>
+  <p>Su base operativa está en Lititz y el condado de Lancaster, lo que les da ventaja logística para visitas, pacientes y recolección de información en persona. El material del cliente menciona una zona tri-state (PA/MD/DE), pero también hay actividad detectada en Nueva Jersey, Nueva York, Carolina del Sur y Virginia. Todavía falta definir cuál de estos mercados debe priorizarse para crecimiento y comunicación.</p>
+
+  <h3>Lo que hacen</h3>
+  <p>De todo, literalmente. Coronas y puentes, coronas completas de oro, reconstrucciones bucales completas, dentaduras fijas y removibles, temporales estéticos, restauraciones sobre implantes, pilares fresados en titanio, dentaduras híbridas, guardas nocturnas... y prótesis Trefoil (un sistema de implante para arcada completa que se coloca en una sola cirugía, en vez de las varias fases que exige el implante tradicional), una tecnología tan nueva que son de los pocos laboratorios del país que ya la manejan (20 casos hechos hasta ahora). Trabajan con impresiones digitales (son un laboratorio TRIOS-ready) y tienen fama de resolver reparaciones rápido, muchas veces el mismo día.</p>
+
+  <h3>Cómo trabajan un caso, en sus propias palabras</h3>
+  <p>Todo arranca con un script firmado por el doctor y una impresión, ya sea física o digital. De ahí en adelante, según qué se necesite (una corona de zirconia, una de disilicato de litio, una PFM, una dentadura, un implante), hacen el modelo, el diseño, el fresado o colado, y antes de entregar revisan tono, oclusión, contactos, margen y contornos, y, sobre todo, que se haya cumplido exactamente lo que el doctor pidió. Si algo no cuadra (el margen, por dónde entra la pieza, falta de espacio, un error de escaneo), no improvisan: llaman al doctor antes de seguir. El proceso específico para casos complejos o de boca completa (full-mouth) todavía no está documentado y es información que vale la pena pedir al cliente.</p>
+
+  <h3>El evento que los representa</h3>
+  <p>"A Night At The Lab" (NATL) es su evento insignia (por invitación, con vino y queso, tour del laboratorio y créditos de educación continua para quien trabaja en la industria dental, aunque la entidad que certifica esos créditos, su duración exacta y su vigencia todavía no están confirmadas). Lo desarrollaron con una agencia (Burgard Agency) bajo la frase <em>"Better labs. Better outcomes. Better business!"</em>, una frase que aparece en los materiales del evento pero que no está confirmada como eslogan corporativo de Toothsmiths.</p>
+
+  <h3>Estándares de fabricación y compromiso con la comunidad</h3>
+  <p>Fabrican en Estados Unidos bajo protocolos FDA y DAMAS, con garantía total de satisfacción. Y desde 2014 son parte de Smile Train, financiando cirugías para niños con labio leporino y paladar hendido, además de trabajo gratuito para Water Street Rescue Mission y Dental Lifeline Network.</p>
+
+  <div class="card" style="border-left:4px solid var(--red);">
+    <strong style="font-family:var(--font-display);color:var(--navy);">Puntos pendientes de validar con el cliente</strong>
+    <ul class="plain" style="margin-top:10px;">
+      <li><b>Digital Acquisition Center:</b> se menciona en el material disponible, pero falta confirmar su nombre formal, alcance y frecuencia.</li>
+      <li><b>Créditos de educación continua de Night At The Lab:</b> entidad emisora, horas y vigencia.</li>
+      <li><b>Proceso para casos full-mouth o complejos:</b> no está desarrollado en la información disponible.</li>
+      <li><b>Evidencia de soporte</b> para cualquier claim de durabilidad o exclusividad antes de usarlo públicamente (ver recuadro de riesgo en la Sección 5).</li>
+    </ul>
+  </div>
+</section>
+
+<section id="s2">
+  <span class="section-label">02 · Personalidad</span>
+  <h2>Valores y personalidad de marca</h2>
+  <p>Tomando en cuenta la trayectoria de la marca, su forma de operar y su relación con los doctores, estos son los cuatro pilares que sostienen la propuesta de Toothsmiths:</p>
+
+  <div class="card">
+    <ul class="plain">
+      <li><span class="value-tag">PARTNERSHIP</span> A diferencia del modelo estándar de la industria (el doctor envía la impresión, el laboratorio la procesa y la devuelve sin más contacto), Toothsmiths visita la oficina del doctor y recibe al paciente directamente en el laboratorio cuando hace falta ajustar un detalle en persona. Esta cercanía no es para cualquiera: la marca prioriza consultorios para quienes la calidad y la experiencia del paciente pesan más que el volumen de casos, y construye con ellos una relación sostenida, no una transacción puntual por caso.</li>
+      <li><span class="value-tag">PRECISION BEFORE PRODUCTION</span> La diferenciación real ocurre antes de fabricar: revisar márgenes, vía de inserción, espacio oclusal y errores de escaneo, y llamar al doctor apenas algo no cuadra, en vez de adivinar. Este mismo principio es la base de Night At The Lab, que existe para que el consultorio aprenda a capturar mejor información desde el origen y así se eviten errores que, de otra forma, terminarían llegando hasta el paciente.</li>
+      <li><span class="value-tag">CRAFTSMANSHIP MEETS TECHNOLOGY</span> El oficio artesanal de casi 40 años convive con tecnología actual: escaneo digital TRIOS, pilares fresados en titanio y prótesis Trefoil, de las más nuevas del sector. La tecnología aporta velocidad y repetibilidad; el oficio aporta el criterio y el acabado que ninguna máquina resuelve sola.</li>
+      <li><span class="value-tag">PATIENT-CENTERED LONGEVITY</span> Cada decisión busca un resultado que le sirva al paciente a largo plazo, no solo que cumpla con la orden del día. Eso incluye explicarle al paciente su propio tratamiento cuando hace falta, y diseñar cada pieza pensando en que dure, no en la entrega más rápida posible.</li>
+    </ul>
+  </div>
+
+  <h3>Personalidad de marca</h3>
+  <p>El tono y la forma en que esto se comunica deben sostener rasgos concretos, y evitar otros con la misma claridad:</p>
+  <div class="swot-grid">
+    <div class="swot-box swot-f">
+      <h4>Deseada</h4>
+      <ul class="plain">
+        <li>Experta</li>
+        <li>Honesta</li>
+        <li>Cercana</li>
+        <li>Intencional</li>
+        <li>Segura sin presumir</li>
+      </ul>
+    </div>
+    <div class="swot-box swot-d">
+      <h4>Evitar</h4>
+      <ul class="plain">
+        <li>Lenguaje pretencioso o de lujo</li>
+        <li>Frialdad tecnológica</li>
+        <li>Nostalgia que parezca obsoleta</li>
+        <li>Promesas absolutas</li>
+        <li>Tono genérico de laboratorio</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Lo que esto implica para la comunicación</h3>
+  <p>La personalidad que esta marca necesita proyectar tiene que sostener dos cosas a la vez: <b>la autoridad de casi 40 años de oficio</b>, y <b>la calidez de un lugar donde cualquiera puede llegar, saludar al perro del laboratorio y sentirse en confianza</b>. El verdadero valor de Toothsmiths no está en lo técnico (eso lo tiene cualquier laboratorio serio), sino en <b>la relación de confianza que construye con cada consultorio</b>; de ahí debe partir cualquier definición de tono y lenguaje de marca. Vale la pena aclarar algo más: el brief del cliente dice que no existe una identidad visual, pero sí hay logo, colores, eslogan y sitio web. Lo que realmente falta no es partir de cero, sino construir un sistema visual coherente que una todo lo que ya existe.</p>
+
+  <div class="problem-callout">
+    <span class="arrow-big">→</span>
+    <h3>La comunicación hasta ahora es más como un folleto informativo, no lo que la marca realmente es.</h3>
+    <p>Si el verdadero valor de Toothsmiths está en la relación de confianza con cada consultorio, su comunicación debería notarse distinta a la de cualquier otro laboratorio. Hoy no es así: su sitio web se presenta con frases como las siguientes, que podrían pertenecer a cualquier laboratorio dental del país.</p>
+    <blockquote>"Aesthetic Restorations, Reconstructions, and Implants" · "Bridging the gap between the clinical and the technical"</blockquote>
+    <p>Es un texto correcto, pero intercambiable. No menciona la relación directa con el doctor, la trayectoria de casi 40 años, ni el trato cercano que de hecho distingue a esta marca.</p>
+  </div>
+</section>
+
+<section id="s3">
+  <span class="section-label">03 · Golden Circle</span>
+  <h2>Síntesis de marca</h2>
+  <div class="golden-circle">
+    <svg class="gc-svg" viewBox="0 0 680 440" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="gcArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 Z" fill="var(--red)"/>
+        </marker>
+      </defs>
+      <circle cx="190" cy="220" r="170" fill="#f1ede4"/>
+      <circle cx="190" cy="220" r="110" fill="var(--navy)"/>
+      <circle cx="190" cy="220" r="58" fill="var(--red)"/>
+
+      <text x="190" y="216" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="15" fill="#fff" letter-spacing="1">POR QUÉ</text>
+      <text x="238" y="147" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="14" fill="#fff" letter-spacing="1">CÓMO</text>
+      <text x="270" y="339" text-anchor="middle" font-family="Archivo" font-weight="800" font-size="14" fill="var(--navy)" letter-spacing="1">QUÉ</text>
+
+      <line x1="214" y1="220" x2="412" y2="220" stroke="var(--red)" stroke-width="2.5" marker-end="url(#gcArrow)"/>
+      <line x1="252" y1="140" x2="412" y2="90" stroke="var(--red)" stroke-width="2.5" marker-end="url(#gcArrow)"/>
+      <line x1="300" y1="332" x2="412" y2="350" stroke="var(--red)" stroke-width="2.5" marker-end="url(#gcArrow)"/>
+
+      <foreignObject x="420" y="40" width="250" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="gc-fo"><b>Cómo:</b> combinando el oficio artesanal con tecnología actual, revisando cada pieza antes de salir, y resolviendo cualquier duda con el doctor antes de avanzar.</div>
+      </foreignObject>
+      <foreignObject x="420" y="170" width="250" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="gc-fo"><b>Por qué:</b> que ningún paciente pase dos veces por la silla, y que el doctor sienta que tiene un aliado, no solo un proveedor.</div>
+      </foreignObject>
+      <foreignObject x="420" y="300" width="250" height="100">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="gc-fo"><b>Qué:</b> un laboratorio dental completo —coronas, puentes, dentaduras, implantes, prótesis híbridas y Trefoil— fabricado en EE. UU. bajo normas FDA y DAMAS.</div>
+      </foreignObject>
+    </svg>
+  </div>
+  <div class="big-statement">No venden una pieza.<br>Venden la confianza que construyen alrededor de ella.</div>
+</section>
+
+<section id="s4">
+  <span class="section-label">04 · Rumbo</span>
+  <h2>Misión y Visión</h2>
+  <h3>Misión</h3>
+  <blockquote>Ser un laboratorio dental integral y un referente comprobado de la industria, brindando a cada doctor los mejores productos, servicios y educación posibles para sus pacientes.</blockquote>
+
+  <h3>Visión</h3>
+  <blockquote>Ser, en cada lugar donde trabajen, el laboratorio al que los doctores no solo le envían casos sino al que le presentan a sus colegas, porque saben que del otro lado hay gente, no una máquina de producir piezas, y seguir siendo el lugar donde la artesanía de toda la vida y la tecnología más nueva conviven sin que ninguna de las dos le gane a la otra.</blockquote>
+  <p>Tanto la misión como la visión se ajustaron tomando en cuenta la historia de la marca, su forma de trabajar y la relación que construye con cada consultorio.</p>
+</section>
+
+<section id="s5">
+  <span class="section-label">05 · Diferencial</span>
+  <h2>Valor diferencial</h2>
+  <p>No todos estos diferenciales tienen el mismo peso. Antes de convertir cualquiera de ellos en un claim público, vale la pena clasificarlo por qué tan sostenible es:</p>
+  <div class="card" style="display:flex;gap:10px;flex-wrap:wrap;">
+    <span class="tag ig-near">Más defendible</span>
+    <span class="tag indirect">Relevante</span>
+    <span class="tag ig-far">Genérico sin evidencia</span>
+    <span class="tag national">Riesgoso</span>
+  </div>
+  <table>
+    <tr><th>Qué los hace distintos</th><th>Cómo lo cuentan ellos mismos</th><th>Nivel</th></tr>
+    <tr><td>No se limitan a enviar la pieza por correo. Visitan la oficina del doctor, o reciben al paciente directamente en el laboratorio.</td><td><em>"Usualmente... el doctor envía la prescripción al laboratorio, el laboratorio lo hace y se lo envía al doctor y listo. Nosotros... eso no es común para nada."</em></td><td><span class="tag ig-near">Más defendible</span></td></tr>
+    <tr><td>Mezclan tecnología de punta con trabajo a mano. Escaneo digital TRIOS, pilares fresados en titanio, Trefoil (de los pocos que lo ofrecen).</td><td>20 casos Trefoil hechos a la fecha.</td><td><span class="tag indirect">Relevante</span></td></tr>
+    <tr><td>Piensan en el largo plazo, no en la venta rápida.</td><td><em>"Esto puede ser más caro... puede ser que lleve más tiempo, pero el producto final te va a durar para toda la vida."</em></td><td><span class="tag national">Riesgoso</span></td></tr>
+    <tr><td>Escogen con quién trabajan. No le corren detrás al volumen.</td><td>Prefieren doctores que priorizan al paciente sobre "producir, producir, producir".</td><td><span class="tag ig-near">Más defendible</span></td></tr>
+    <tr><td>Resuelven rápido cuando hay una emergencia.</td><td>Muchas reparaciones, el mismo día.</td><td><span class="tag ig-far">Genérico sin evidencia</span></td></tr>
+    <tr><td>Le devuelven algo a su comunidad.</td><td>Miembros de Smile Train desde 2014; trabajo gratuito con Water Street Rescue Mission y Dental Lifeline Network.</td><td><span class="tag indirect">Relevante</span></td></tr>
+    <tr><td>Tienen quien lo respalde.</td><td><em>"Toothsmiths is clearly a leader... Jim Ament and his expert staff have proven invaluable..."</em> (Rick Leibold, DDS)</td><td><span class="tag ig-near">Más defendible</span></td></tr>
+  </table>
+  <div class="problem-callout">
+    <span class="arrow-big">→</span>
+    <h3>"Dura toda la vida" no debería publicarse tal cual.</h3>
+    <p>Es una frase real, dicha por el propio equipo, pero es exactamente el tipo de afirmación que no debería convertirse en claim público sin soporte técnico y legal que la respalde (garantía, años de vida útil comprobados, condiciones de uso). Lo mismo aplica para cualquier frase del tipo "nadie más hace esto" o cifras que no estén verificadas: son útiles como evidencia interna de cómo piensa la marca, no como texto final de comunicación.</p>
+  </div>
+  <p>Este diferencial encaja con un tipo de consultorio específico: el privado, centrado en el paciente y pensado para el largo plazo, y se aleja a propósito del modelo de las cadenas corporativas, orientadas al volumen y al estándar.</p>
+</section>
+
+<section id="s6">
+  <span class="section-label">06 · Personas</span>
+  <h2>Personificación y clientes ideales</h2>
+  <p>Para construir la personificación de marca y los clientes ideales partimos de tres preguntas: ¿la marca le habla a gente joven o no?, ¿se orienta más a hombres, a mujeres o a ambos?, y ¿el enfoque es más corporativo o más de servicio cercano? Las respondimos apoyándonos en datos reales de la industria dental en EE. UU. (American Dental Association, Health Policy Institute, 2024-2025): la edad promedio de los dentistas activos es 47 años, se jubilan en promedio a los 68.7, y aunque históricamente la profesión fue mayoritariamente masculina (hoy 62.8% hombres / 37.2% mujeres), entre los menores de 35 años la mitad ya son mujeres: la balanza se está emparejando rápido entre los más jóvenes.</p>
+
+  <h3 class="sub-dark">Brand Person</h3>
+  <div class="persona">
+    <div class="name">Richard "Dick" Weaver, 56 años</div>
+    <p class="bio">Si Toothsmiths fuera una persona, sería él: un maestro artesano que lleva décadas en el oficio y que, en vez de resistirse a la tecnología nueva, la adoptó apenas vio su utilidad. Es una persona que se mantiene al día con las tendencias del sector. Habla poco pero dice las cosas claras, y cuando da su palabra la cumple: para él un acuerdo de palabra vale tanto como un contrato. Fuera del laboratorio restaura herramientas y motores viejos los fines de semana, tiene un par de perros que a veces se lleva al trabajo, y es de los que prefiere enseñarle a alguien joven en persona antes que mandarle un manual.</p>
+    <dl>
+      <dt>Arquetipos</dt><dd>El Artesano (precisión, oficio, orgullo por el trabajo bien hecho) y el Mentor (enseña sin hacer sentir menos a nadie).</dd>
+      <dt>Propósito</dt><dd>Que ningún doctor sienta que está solo resolviendo un caso difícil.</dd>
+      <dt>Tono de voz</dt><dd>Directo, cálido, sin adornos. Nada de tecnicismos innecesarios ni de frases de manual corporativo.</dd>
+      <dt>Lenguaje</dt><dd>Cercano y concreto, como quien explica algo mirando a los ojos, no leyendo un guión.</dd>
+    </dl>
+  </div>
+
+  <h3 class="sub-dark" style="background:var(--red);">Buyer Persons (clientes ideales)</h3>
+  <p>Toothsmiths no le habla a un solo tipo de doctor (le habla a dentistas generales, especialistas y cirujanos orales), así que un solo cliente ideal se queda corto. Definimos tres, cada uno representando una necesidad distinta, sin repetirse entre ellos:</p>
+
+  <div class="persona buyer">
+    <div class="name">1. Karen, 51 años</div>
+    <p class="bio">Tiene su propia clínica familiar desde hace casi 20 años, en un pueblo donde todo el mundo se conoce. No vive pegada al teléfono ni a Instagram; decide con quién trabajar por recomendación de otro doctor o porque ya conoce a la persona en persona. Los fines de semana está en su jardín o en el partido de fútbol de su hija menor.</p>
+    <dl>
+      <dt>Objetivos</dt><dd>Que cada caso salga bien a la primera, sin tener que estar explicando lo mismo dos veces.</dd>
+      <dt>Desafíos</dt><dd>No tiene tiempo ni ganas de aprender un sistema nuevo cada vez que cambia de laboratorio.</dd>
+      <dt>Motivaciones</dt><dd>La calidez humana. Quiere sentir que del otro lado hay alguien que la conoce, no un formulario.</dd>
+      <dt>Temores</dt><dd>Quedar mal con un paciente de toda la vida por un error que no fue culpa suya.</dd>
+      <dt>Dónde está</dt><dd>Casi nada en redes; se entera de todo boca a boca y por las visitas en persona.</dd>
+    </dl>
+  </div>
+
+  <div class="persona buyer">
+    <div class="name">2. Marcus, 41 años</div>
+    <p class="bio">Cirujano oral y maxilofacial con enfoque en estética e implantes, en una ciudad mediana. Activo en Instagram y en comunidades profesionales en línea; sigue cuentas de carros clásicos y corre medias maratones los fines de semana. Le gusta que lo vean como alguien que está a la vanguardia, no solo en lo clínico sino en cómo se presenta.</p>
+    <dl>
+      <dt>Objetivos</dt><dd>Diferenciarse con casos de alta estética que luzcan bien hasta en una foto de Instagram.</dd>
+      <dt>Desafíos</dt><dd>Encontrar un laboratorio que entienda de diseño de sonrisa, no solo de fabricación.</dd>
+      <dt>Motivaciones</dt><dd>La innovación y la tecnología. Le atrae que le hablen de digital dentistry y no de procesos de hace 20 años.</dd>
+      <dt>Temores</dt><dd>Que un caso complejo salga mal y le cueste la confianza del paciente (y la de otros colegas que lo ven en redes).</dd>
+      <dt>Dónde está</dt><dd>Instagram, grupos profesionales de Facebook, webinars de educación continua.</dd>
+    </dl>
+  </div>
+
+  <div class="persona buyer">
+    <div class="name">3. Ashley, 31 años</div>
+    <p class="bio">Recién egresada y ya dueña de su propio consultorio pequeño, en una ciudad universitaria. Parte de esa generación de dentistas jóvenes donde la mitad son mujeres. Muy activa en Instagram, tanto para su consultorio como para su vida personal, le encanta el yoga y tiene un golden retriever que sale en casi todas sus historias.</p>
+    <dl>
+      <dt>Objetivos</dt><dd>Construir su consultorio desde cero y que su marca personal (la de ella como doctora, no solo el consultorio) se vea profesional desde el día uno.</dd>
+      <dt>Desafíos</dt><dd>Presupuesto ajustado, así que necesita proveedores que le den buen resultado sin cobrarle como si fuera una clínica grande y establecida.</dd>
+      <dt>Motivaciones</dt><dd>Sentirse acompañada en el proceso. No quiere sentirse sola decidiendo todo por primera vez.</dd>
+      <dt>Temores</dt><dd>Que se note que es nueva y que eso la haga ver menos confiable frente a sus pacientes o colegas.</dd>
+      <dt>Dónde está</dt><dd>Instagram todo el día, TikTok para inspiración, grupos de Facebook de dentistas jóvenes.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="s7">
+  <span class="section-label">07 · Competencia</span>
+  <h2>Análisis de competencia</h2>
+  <p>Miramos la competencia desde tres ángulos: quien les compite puerta con puerta, quien les compite a nivel nacional con el mismo modelo de negocio, y quién les está ganando la batalla visual en Instagram.</p>
+
+  <h3>7.1 Competencia directa local <em style="font-weight:400;font-size:14px;">(Lititz y Condado de Lancaster, PA)</em></h3>
+  <div class="card">
+    <ul class="plain">
+      <li><span class="tag local">Local</span><br><span class="named">Austin Dental Ceramics (Lititz, PA):</span> laboratorio de corona y puente especializado, con más de 40 años de oficio artesanal combinado con dentistería digital, de segunda generación familiar y miembro de la National Association of Dental Laboratories. <em>Lo que hay que rescatar:</em> trayectoria y storytelling (familia, artesanía) muy parecido al de Toothsmiths. <em>Lo que Toothsmiths puede explotar:</em> ellos se especializan en corona y puente; Toothsmiths ofrece un rango mucho más amplio (dentaduras, implantes, Trefoil, reconstrucciones completas).</li>
+      <li><span class="tag local">Local</span><br><span class="named">First Impressionz Dental Lab (Lancaster, PA):</span> laboratorio pequeño y en crecimiento que, igual que Toothsmiths, ofrece entrenamiento clínico-laboratorio para dentistas, ajuste de tono de color personalizado por paciente, y casos de emergencia el mismo día. <em>Este es el que más hay que vigilar:</em> le está pisando el terreno exacto donde Toothsmiths cree que es único (la educación al doctor). <em>A favor de Toothsmiths:</em> casi 40 años de trayectoria que un laboratorio chico todavía no tiene.</li>
+      <li><span class="tag local">Local</span><br><span class="named">Star Dental Lab (PA, NJ y Delaware):</span> laboratorio regional más grande (850+ casos al mes, 150+ consultorios clientes) que también se posiciona como "partnership-focused". Compite más por escala que por calidez personal.</li>
+    </ul>
+  </div>
+
+  <h3>7.2 Competencia indirecta <em style="font-weight:400;font-size:14px;">(otro modelo de negocio, mismo territorio)</em></h3>
+  <div class="card">
+    <span class="tag indirect">Indirecta</span><br>
+    <span class="named">The Dental Lab (Bristol, PA):</span> fundado en 1989, con 4 sedes y envíos a nivel nacional desde Pensilvania. No es indirecta por estar lejos (está en el mismo estado) sino por el modelo: es una operación de escala (1.561 publicaciones, 6.284 seguidores), con cursos pagos de educación continua ("CE Events") y un tono más corporativo/institucional que el trato personal y boutique de Toothsmiths. Aun así, le compite por los mismos doctores de Pensilvania que podrían preferir un laboratorio más grande y con más respaldo.
+  </div>
+
+  <h3>7.3 Competencia directa nacional <em style="font-weight:400;font-size:14px;">(mismo modelo boutique de alta estética)</em></h3>
+  <div class="card">
+    <ul class="plain">
+      <li><span class="tag national">Nacional</span><br><span class="named">Gold Dust Dental Lab (Tempe, Arizona):</span> de lejos, el más parecido a lo que Toothsmiths podría llegar a ser si escalara: combina excelencia estética, educación continua (su propia "Clinical Mastery Series") y decidieron a propósito "quedarse lo suficientemente chicos para no perder de vista la relación con el clínico".</li>
+      <li><span class="tag national">Nacional</span><br><span class="named">Vital Aesthetics Dental Laboratory (Manhattan, NY):</span> fundado en 1984, con cerca de cuatro décadas de trayectoria enfocadas en casos estéticos complejos (carillas, rehabilitaciones completas), con un servicio altamente personalizado por caso y trabajo cercano con especialistas de alta gama en Manhattan.</li>
+      <li><span class="tag national">Nacional</span><br><span class="named">The Art of Aesthetics:</span> laboratorio boutique de alta gama que combina estética avanzada e implantología, y atiende tanto a consultorios de EE. UU. como internacionales. Su propio nombre apuesta a posicionarse como una marca de diseño, más que de manufactura.</li>
+      <li><span class="tag national">Nacional</span><br><span class="named">Hans Aesthetics Dental Lab (NY):</span> laboratorio neoyorquino enfocado en estética dental de alta gama, con un posicionamiento similar al de Toothsmiths en cuanto a atención personalizada por caso. <span class="named">Aesthetic Digital Solutions (NJ):</span> laboratorio de Nueva Jersey centrado en flujos de trabajo 100% digitales, apostando a la velocidad y precisión del escaneo intraoral como diferencial.</li>
+      <li><span class="tag national">Nacional</span><br><span class="named">Bioprime Lab (Brooklyn, NY)</span> y <span class="named">American Dental Laboratory (Richardson, TX):</span> mismo modelo boutique y mismo público objetivo que Toothsmiths; además, se destacan por su manejo de comunicación visual en Instagram (ver sección 7.4).</li>
+      <li><span class="tag national">Nacional</span><br><span class="named">Advanced Dental Lab Inc.:</span> nombrado directamente en el brief del cliente como competidor, pero no fue posible ubicar una página web o cuenta de Instagram pública verificable.
+        <div class="pending-flag">Pendiente MAGA: solicitar al cliente el sitio web o el usuario de Instagram de este competidor para poder analizarlo con el mismo nivel de detalle que los demás.</div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="card" style="border-left:4px solid var(--red);">
+    <strong style="font-family:var(--font-display);color:var(--navy);">Viva Dental Studio (Nueva York) — nombrado en el brief, pero no es un competidor comparable</strong>
+    <p style="margin-top:10px;">A diferencia de los demás nombres de esta sección, @vivadentalny no es un laboratorio dental que atienda a doctores (modelo B2B), sino una clínica de atención directa al paciente: "Dentista especialista en estética dental", con sedes en FIDI (Manhattan) y Brooklyn, 140 publicaciones y cerca de 5.700 seguidores. Su contenido está orientado 100% a conversión de paciente: destacados por tratamiento (Dental Aesthetics, Testimonial, Before & After, Promotions, Dental Hygiene, Oral Rehab, Dental Surgery) y casi cada publicación lleva un precio visible y un llamado a la acción ("Book free", "Only this month", "Scary prices for a smile without scares").</p>
+    <p>No compite con Toothsmiths en su modelo de negocio (laboratorio que trabaja con doctores, no con pacientes finales), así que no debería tratarse como un competidor directo ni nacional. Sí sirve como ejemplo de un extremo a evitar: un tono muy comercial y agresivo en precio, justo lo opuesto a la calidez y la relación de confianza que Toothsmiths quiere proyectar. Vale la pena confirmar con el cliente si esta referencia se incluyó por error en el brief o si existe alguna relación distinta que debamos entender.</p>
+  </div>
+
+  <h3>7.4 Competencia y referencia en Instagram <em style="font-weight:400;font-size:14px;">(cerca, EE. UU.)</em></h3>
+  <div class="card" style="background:var(--navy);color:#fff;border:none;">
+    <strong style="font-family:var(--font-display);">Así se ve hoy @toothsmiths_inc</strong>
+    <p style="color:#c9d2e3;margin-top:8px;">157 publicaciones, pero solo 42 seguidores y 22 seguidos: mucho volumen, prácticamente ningún alcance. Los "likes" visibles van de 0 a 5, con 0 comentarios en casi todo. El feed mezcla fotos crudas de moldes de yeso con luz dura de laboratorio, con piezas gráficas promocionales ("A Night at the Lab" en morado con estrellas, "Inside the Lab" en letras amarillas) que no comparten ni tipografía ni paleta entre sí. La bio es puramente funcional. No hay destacados organizados.</p>
+  </div>
+
+  <div class="competitor">
+    <span class="tag ig-near">EE. UU. · Nacional + IG</span>
+    <h4>Bioprime Lab (Brooklyn, NY)</h4>
+    <img src="images/bioprime.jpg" alt="Perfil de Instagram de Bioprime Lab">
+    <ul class="arrow-list">
+      <li>Destacados organizados por tema: Workflow, Implants, Single Crowns, <b>Our Team</b> (este último le pone cara a la gente detrás del laboratorio).</li>
+      <li>Mezcla fotos de caso real con piezas de texto simple sobre fondo negro ("Not all teeth are the same, and that's exactly the point") y hasta screenshots de WhatsApp con doctores, lo que humaniza mucho.</li>
+      <li>Bio corta y clara: qué hacen, su promesa ("Predictable fit + Functional esthetics"), ciudad, teléfono, fácil de contactar.</li>
+    </ul>
+    <div class="take"><b>Qué tomar para Toothsmiths:</b> el destacado "Our Team" y el uso de capturas de conversaciones reales con doctores como prueba social informal.</div>
+  </div>
+
+  <div class="competitor">
+    <span class="tag ig-near">EE. UU. · Nacional + IG</span>
+    <h4>American Dental Laboratory (Richardson, TX)</h4>
+    <img src="images/americandentallaboratory.jpg" alt="Perfil de Instagram de American Dental Laboratory">
+    <ul class="arrow-list">
+      <li>Plantillas de marca consistentes (azul marino + rojo + blanco) para toda pieza gráfica (feriados, anuncios, cumpleaños), como si un diseñador les hubiera armado un sistema.</li>
+      <li>Mezcla cultura de equipo (cumpleaños de Felix Silva, COO; reconocimientos como juez de los WOW! Awards) con contenido de proceso ("Design → Print → Wash") y hasta humor pop ("Back to the Future", calabazas de Halloween).</li>
+      <li>Bio con lista clara de servicios y una frase gancho ("Esthetics + Function | Smiles made here!").</li>
+    </ul>
+    <div class="take"><b>Qué tomar para Toothsmiths:</b> el sistema de plantillas de marca repetible, y mostrar a la gente (no solo el producto) celebrando logros y fechas: eso es exactamente la calidez que Toothsmiths ya tiene en persona pero no muestra en redes.</div>
+  </div>
+
+  <div class="competitor">
+    <span class="tag indirect">EE. UU. · Indirecta + IG</span>
+    <h4>The Dental Lab (Bristol, PA)</h4>
+    <img src="images/thedentallab.jpg" alt="Perfil de Instagram de The Dental Lab">
+    <ul class="arrow-list">
+      <li>Destacados pensados para el doctor que está decidiendo si trabajar con ellos: Partnerships, Testimonials, CE Events, Case Results, Our Lab.</li>
+      <li>Volumen y constancia altos (1.561 publicaciones, 6.284 seguidores); incluso si el feed no es tan pulido visualmente como Uniqa, la cantidad y la variedad (casos reales, fechas conmemorativas, mascota juguetona, eventos de educación) generan presencia real.</li>
+    </ul>
+    <div class="take"><b>Qué tomar para Toothsmiths:</b> el destacado "Partnerships" es casi textualmente el diferencial que Toothsmiths ya tiene (la relación directa con el doctor) y que hoy no comunica en redes.</div>
+  </div>
+
+  <h3>7.5 Referencia visual lejana <em style="font-weight:400;font-size:14px;">(fuera de EE. UU., no son competencia, pero marcan el estándar)</em></h3>
+  <p>Ninguna de las dos compite por los mismos clientes que Toothsmiths (están en otro continente), pero ambas muestran a dónde puede llegar un laboratorio dental en Instagram si se lo propone, y eso sí aplica sin importar el país.</p>
+
+  <div class="competitor">
+    <span class="tag ig-far">Londres · Solo referencia visual</span>
+    <h4>Uniqa Dental Lab</h4>
+    <img src="images/uniqalab.jpg" alt="Perfil de Instagram de Uniqa Dental Lab">
+    <ul class="arrow-list">
+      <li>Coherencia visual perfecta: mismo fondo oscuro, misma luz de estudio, misma distancia de cámara en prácticamente todas las fotos; se siente una sola marca, no una colección de fotos sueltas.</li>
+      <li>Destacados organizados exactamente por lo que un doctor nuevo querría revisar: Veneers, Molars, All on X, Cases, Implants, Centrals, Lab.</li>
+      <li>Bio en tres líneas que dice qué hacen, qué tan buenos son y para quién trabajan ("Multi-Award Winning Dental Lab | Working with Clinicians Worldwide").</li>
+    </ul>
+    <div class="take"><b>Qué tomar para Toothsmiths:</b> la disciplina de fondo y luz únicos para toda foto de producto, y destacados organizados por tipo de caso.</div>
+  </div>
+
+  <div class="competitor">
+    <span class="tag ig-far">Turquía · Solo referencia visual</span>
+    <h4>International Plus Dental Art Laboratory</h4>
+    <img src="images/internationalplus.jpg" alt="Perfil de Instagram de International Plus Dental Art Laboratory">
+    <ul class="arrow-list">
+      <li>Paleta blanco y negro consistente en absolutamente todas las piezas, con una tipografía única que se repite en cada serie ("CRAFTED WITH...", "FOCUS ON DETAIL", "MADE TO STAND OUT").</li>
+      <li>Bio con gancho propio: "100% Digital Dentistry" + "Where Dentistry Meets Art"; en dos líneas dice qué hacen y cómo lo ven ellos mismos.</li>
+    </ul>
+    <div class="take"><b>Qué tomar para Toothsmiths:</b> exactamente lo que hoy le falta, una identidad gráfica única que se repita en cada pieza, en vez de que cada serie hable un idioma visual distinto.</div>
+  </div>
+
+  <div class="card">
+    <strong style="font-family:var(--font-display);color:var(--navy);">Síntesis: lo que le falta a Toothsmiths, visto en conjunto</strong>
+    <ul class="plain" style="margin-top:10px;">
+      <li>Una paleta y tipografía única para todas las piezas gráficas (como Uniqa e International Plus).</li>
+      <li>Destacados organizados por tema, tipo de caso, equipo, proceso, como los cuatro ejemplos de arriba.</li>
+      <li>Mostrar a las personas detrás del laboratorio, no solo los moldes: el equipo, las mascotas, el ambiente familiar que sí tienen (como Bioprime y American Dental Laboratory).</li>
+      <li>Un sistema de plantillas de marca repetible para piezas de evento y fechas conmemorativas (como American Dental Laboratory).</li>
+      <li>Una bio con gancho propio, no una ficha técnica.</li>
+      <li>Constancia y etiquetado: 157 publicaciones sin crecer casi nada en seguidores sugiere que no se está etiquetando a los doctores aliados ni usando colaboraciones (Collabs) para que ellos también compartan el contenido a su propia audiencia.</li>
+      <li>Más piezas mostrando el oficio a mano (el pincelado capa por capa, por ejemplo); es la forma más directa de comunicar "artesanía" sin decir la palabra artesanía.</li>
+    </ul>
+  </div>
+
+  <h3>7.6 Recomendaciones de contenido</h3>
+  <div class="card">
+    <ul class="plain">
+      <li><b>Videos explicativos con IA.</b> Usar video generativo para explicar procedimientos y productos (qué es una corona Trefoil, cómo funciona un pilar fresado en titanio) de forma visual y rápida de producir, sin depender de una producción costosa.</li>
+      <li><b>Reels vivenciales.</b> Mostrar el servicio en acción, tanto para el paciente como para el doctor: la visita a la oficina, el ajuste de tono en persona, el recorrido por el laboratorio. Es la forma más directa de comunicar la cercanía que ya tienen.</li>
+      <li><b>Entrevistas a doctores.</b> Testimonios en video de los consultorios con los que ya trabajan, hablando de su experiencia con el laboratorio. Funciona como prueba social mucho más persuasiva que una cita de texto.</li>
+      <li><b>Sesiones con el equipo.</b> Tomar una pregunta o comentario real de redes sociales y que alguien del equipo lo responda en cámara. Humaniza la marca y, de paso, educa (algo que ya es parte de su ADN).</li>
+      <li><b>Contenido del día a día, sin tanto diseño.</b> Fotos simples del trabajo diario, acompañadas de un buen copy explicativo, en lugar de piezas gráficas sobrecargadas. Se siente más auténtico y es más rápido de producir con constancia.</li>
+      <li><b>Fotografía de calidad del producto final.</b> Invertir en buena luz y buen ángulo para las piezas terminadas: es el contenido que más credibilidad técnica transmite y hoy es el más débil del feed actual.</li>
+      <li><b>Uso constante de historias (Stories).</b> Para mostrar procesos paso a paso, detrás de cámaras del laboratorio, preguntas y respuestas con la comunidad, y como espacio de prueba para contenido que no necesita quedar guardado en el feed principal.</li>
+    </ul>
+  </div>
+
+  <h3>7.7 Síntesis estratégica: análisis FODA</h3>
+  <p>Cruzando todo lo anterior (valores, diferencial, competencia), este es el panorama completo de dónde está Toothsmiths hoy y hacia dónde puede moverse.</p>
+  <div class="swot-grid">
+    <div class="swot-box swot-f">
+      <h4>Fortalezas</h4>
+      <ul class="plain">
+        <li>Relación directa y sostenida con cada consultorio, no solo envío de piezas.</li>
+        <li>Dominio técnico amplio: de corona y puente a Trefoil, con escaneo digital TRIOS.</li>
+        <li>Casi 40 años de trayectoria y respaldo real (testimonios, Smile Train).</li>
+        <li>Capacidad de respuesta rápida ante emergencias, muchas veces el mismo día.</li>
+      </ul>
+    </div>
+    <div class="swot-box swot-d">
+      <h4>Debilidades</h4>
+      <ul class="plain">
+        <li>Identidad visual inconsistente entre web, Instagram y piezas de evento.</li>
+        <li>Comunicación genérica que no transmite el diferencial real de la marca.</li>
+        <li>Fotografía de equipo desactualizada, que no refleja a quienes trabajan ahí hoy.</li>
+        <li>Presencia casi nula en Instagram frente al resto de la categoría.</li>
+      </ul>
+    </div>
+    <div class="swot-box swot-o">
+      <h4>Oportunidades</h4>
+      <ul class="plain">
+        <li>Unificar el lenguaje visual entre web, Instagram y piezas de evento.</li>
+        <li>Mostrar en redes lo que ya hacen bien en persona: cercanía, visitas, enseñanza.</li>
+        <li>Convertir Night At The Lab en una serie de contenido con identidad propia.</li>
+        <li>Apalancar el mismo ADN que referentes nacionales como Gold Dust Dental Lab ya validaron a mayor escala.</li>
+      </ul>
+    </div>
+    <div class="swot-box swot-a">
+      <h4>Amenazas</h4>
+      <ul class="plain">
+        <li>Competidores locales más chicos (First Impressionz) ya ocupan el espacio de "educación al doctor".</li>
+        <li>Competidores con producto similar (Bioprime, American Dental Laboratory, The Dental Lab) comunican mejor en Instagram.</li>
+        <li>Laboratorios de mayor escala (Star Dental Lab, The Dental Lab) compiten por los mismos doctores con más capacidad operativa.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>Análisis de marca · Toothsmiths · Proyecto independiente de branding</footer>
+
+</body>
+</html>
